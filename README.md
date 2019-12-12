@@ -50,7 +50,7 @@
 Steps:
 
 1. create CSS classes `.table` `.header` `.body` `.sticky` etc... (check following example)
-2. create HTML elements `<div className="table sticky">`, `<div className="header">` and `<div className="body">`
+2. create HTML elements `<div className="table sticky">`, `<div className="header">`, `<div className="body">` etc...
 3. wrap headerGroups with `stickyHeaderGroups(headerGroups)` and row with `stickyRow(row)`
 4. then, add `sticky: 'left'` or `sticky: 'right'` to your column
 
