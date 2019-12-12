@@ -54,7 +54,7 @@
     "npm-run-all": "^4.1.5",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "react-table": "7.0.0-beta.27",
+    "react-table": "7.0.0-rc.9",
     "react-test-renderer": "^16.10.2",
     "styled-components": "^4.4.1",
     "ts-jest": "^24.1.0",

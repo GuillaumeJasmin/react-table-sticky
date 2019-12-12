@@ -28,7 +28,7 @@
   <br/>
 </div>
 
-:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-beta.27`
+:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.9`
 
 ## Documentation
 
