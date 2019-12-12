@@ -43,18 +43,27 @@
 ## Features
 * sticky header
 * sticky columns left and/or right
+* full customizable
 
 ## Simple example
+
+Steps:
+
+1. create CSS classes `.table` `.header` `.body` `.sticky` etc... (check following example)
+2. create HTML elements `<div className="table sticky">`, `<div className="header">` and `<div className="body">`
+3. wrap headerGroups with `stickyHeaderGroups(headerGroups)` and row with `stickyRow(row)`
+4. then, add `sticky: 'left'` or `sticky: 'right'` to your column
+
+full example:
 
 ```js
 import React from 'react';
 import { useTable, useBlockLayout } from 'react-table';
-import { stickyHeaderGroups, stickyRow, Sticky } from 'react-table-sticky';
+import { stickyHeaderGroups, stickyRow } from 'react-table-sticky';
 import styled from 'styled-components';
 
 const Styles = styled.div`
   .table {
-    border-spacing: 0;
     border: 1px solid #ddd;
 
     .tr {
@@ -67,14 +76,44 @@ const Styles = styled.div`
 
     .th,
     .td {
-      margin: 0;
-      padding: 7px;
+      padding: 5px;
       border-bottom: 1px solid #ddd;
       border-right: 1px solid #ddd;
-      overflow: hidden;
+      background-color: #fff;
 
       :last-child {
         border-right: 0;
+      }
+    }
+
+    &.sticky {
+      overflow: scroll;
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      .body {
+        position: relative;
+        z-index: 0;
+      }
+
+      .tr[data-sticky-last-header-tr] {
+        box-shadow: 0px 3px 3px #ccc;
+      }
+
+      .td, .th {
+        overflow: hidden;
+
+        &[data-sticky-last-left-td] {
+          box-shadow: 2px 0px 3px #ccc;
+        }
+
+        &[data-sticky-first-right-td] {
+          box-shadow: -2px 0px 3px #ccc;
+        }
       }
     }
   }
@@ -85,18 +124,18 @@ function TableDemo() {
     {
       Header: 'First Name',
       accessor: 'firstName',
-      fixed: 'left',
+      sticky: 'left',
     },
     {
       Header: 'Last Name',
       accessor: 'lastName',
-      fixed: 'left',
+      sticky: 'left',
     },
     ...
     {
       Header: 'age',
       accessor: 'age',
-      fixed: 'right',
+      sticky: 'right',
     }
   ]
 
@@ -120,8 +159,8 @@ function TableDemo() {
 
   return (
     <Styles>
-      <Sticky.Table {...getTableProps()} className="table" style={{ width: 800, height: 400 }}>
-        <Sticky.Header>
+      <div {...getTableProps()} className="table sticky" style={{ width: 1000, height: 500 }}>
+        <div className="header">
           {stickyHeaderGroups(headerGroups).map((headerGroup) => (
             <div {...headerGroup.getHeaderGroupProps()} className="tr">
               {headerGroup.headers.map((column) => (
@@ -131,11 +170,10 @@ function TableDemo() {
               ))}
             </div>
           ))}
-        </Sticky.Header>
-        <Sticky.Body {...getTableBodyProps()}>
+        </div>
+        <div {...getTableBodyProps()} className="body">
           {rows.map((row) => {
             prepareRow(row);
-            
             return (
               <div {...row.getRowProps()} className="tr">
                 {stickyRow(row).cells.map((cell) => (
@@ -146,21 +184,21 @@ function TableDemo() {
               </div>
             );
           })}
-        </Sticky.Body>
-      </Sticky.Table>
+        </div>
+      </div>
     </Styles>
   );
 }
 
 ```
 
-*Tips:* if your table contain at least one header group, place yours fixed columns into a group too (even with an empty Header name)
+*Tips:* if your table contain at least one header group, place yours sticky columns into a group too (even with an empty Header name)
 
 ```js
 const columns = [
   {
     Header: ' ',
-    fixed: 'left',
+    sticky: 'left',
     columns: [
       {
         Header: 'First Name',
@@ -183,9 +221,6 @@ const columns = [
   
 ## API
 
-* `Sticky.Table`
-* `Sticky.Header`
-* `Sticky.Body`
 * `stickyHeaderGroups`
 * `stickyRow`
 
