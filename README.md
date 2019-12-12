@@ -5,6 +5,8 @@
     <br/>
     <br/>
   </h1>
+    :warning: Under developpment, still unstable
+    <br/>
     <br/>
     <a href="https://www.npmjs.com/package/react-table-sticky">
       <img src="https://img.shields.io/npm/v/react-table-sticky.svg" alt="npm package" />
