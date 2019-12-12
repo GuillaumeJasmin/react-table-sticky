@@ -30,7 +30,7 @@
 
 ## Documentation
 
-<!-- * [Demo on CodeSandbox]() -->
+* [Demo on CodeSandbox](https://codesandbox.io/s/sweet-cori-gl81g)
 * [Features](#features)
 * [Simple example](#simple-example)
 * [API](#api)

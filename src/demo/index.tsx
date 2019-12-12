@@ -31,6 +31,7 @@ const Styles = styled.div`
       border-bottom: 1px solid #ddd;
       border-right: 1px solid #ddd;
       overflow: hidden;
+      background-color: #fff;
 
       :last-child {
         border-right: 0;
