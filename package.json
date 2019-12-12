@@ -1,0 +1,67 @@
+{
+  "name": "react-table-sticky",
+  "version": "0.1.0",
+  "description": "Sticky components for react-table v7",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "scripts": {
+    "build": "run-s clean test build:*",
+    "build:main": "tsc -p tsconfig.build.json",
+    "demo": "NODE_END=development webpack-dev-server --config src/demo/webpack.config.js",
+    "test": "run-s test:*",
+    "test:eslint": "npx eslint --ext .tsx --ext .ts src/",
+    "test:jest": "npx jest --env=jsdom --verbose",
+    "test:jest:watch": "npx jest --watch --env=jsdom",
+    "clean": "rm -rf build",
+    "release-patch": "npm version patch",
+    "release-minor": "npm version minor",
+    "release-major": "npm version major"
+  },
+  "author": "Guillaume JASMIN",
+  "homepage": "https://github.com/guillaumejasmin/react-table-sticky",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:guillaumejasmin/react-table-sticky.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "tag": "next"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@testing-library/react": "^9.3.0",
+    "@testing-library/react-hooks": "^3.1.0",
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^24.0.18",
+    "@types/react": "^16.9.4",
+    "@types/styled-components": "^4.4.1",
+    "@typescript-eslint/eslint-plugin": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.2",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.15.1",
+    "eslint-plugin-react-hooks": "^2.1.1",
+    "eslint-plugin-typescript-sort-keys": "^0.5.0",
+    "html-webpack-plugin": "^3.2.0",
+    "jest": "^24.9.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-table": "7.0.0-beta.27",
+    "react-test-renderer": "^16.10.2",
+    "styled-components": "^4.4.1",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}
