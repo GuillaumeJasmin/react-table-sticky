@@ -181,8 +181,6 @@ const columns = [
   
 ## API
 
-There is some custom props that can be usefull
-
 * `Sticky.Table`
 * `Sticky.Header`
 * `Sticky.Body`
