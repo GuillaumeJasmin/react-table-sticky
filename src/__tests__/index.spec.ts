@@ -1,7 +1,7 @@
 import {
-  getFixedValue,
-  columnIsLastLeftFixed,
-  columnIsFirstRightFixed,
+  getStickyValue,
+  columnIsLastLeftSticky,
+  columnIsFirstRightSticky,
   getMarginRight,
 } from '../index';
 
@@ -15,53 +15,53 @@ function createColumn(data: any) {
 }
 
 describe('tests', () => {
-  it('getFixedValue works with left', () => {
-    const column = createColumn({ fixed: 'left' });
-    expect(getFixedValue(column)).toEqual('left');
+  it('getStickyValue works with left', () => {
+    const column = createColumn({ sticky: 'left' });
+    expect(getStickyValue(column)).toEqual('left');
   });
 
-  it('getFixedValue works with right', () => {
-    const column = createColumn({ fixed: 'right' });
-    expect(getFixedValue(column)).toEqual('right');
+  it('getStickyValue works with right', () => {
+    const column = createColumn({ sticky: 'right' });
+    expect(getStickyValue(column)).toEqual('right');
   });
 
-  it('getFixedValue doesn\'t works with bad value', () => {
-    const column = createColumn({ fixed: 'foo' });
-    expect(getFixedValue(column)).toEqual(null);
+  it('getStickyValue doesn\'t works with bad value', () => {
+    const column = createColumn({ sticky: 'foo' });
+    expect(getStickyValue(column)).toEqual(null);
   });
 
-  it('getFixedValue works with parent', () => {
+  it('getStickyValue works with parent', () => {
     const column = createColumn({
       parent: {
-        fixed: 'left',
+        sticky: 'left',
       },
     });
-    expect(getFixedValue(column)).toEqual('left');
+    expect(getStickyValue(column)).toEqual('left');
   });
 
-  it('columnIsLastLeftFixed true', () => {
+  it('columnIsLastLeftSticky true', () => {
     const columns = [
       {
         id: 1,
-        fixed: 'left',
+        sticky: 'left',
       },
       {
         id: 2,
-        fixed: 'left',
+        sticky: 'left',
       },
       {
         id: 3,
       },
     ];
 
-    expect(columnIsLastLeftFixed(2, columns)).toEqual(true);
+    expect(columnIsLastLeftSticky(2, columns)).toEqual(true);
   });
 
-  it('columnIsLastLeftFixed false', () => {
+  it('columnIsLastLeftSticky false', () => {
     const columns = [
       {
         id: 1,
-        fixed: 'left',
+        sticky: 'left',
       },
       {
         id: 2,
@@ -71,28 +71,28 @@ describe('tests', () => {
       },
     ];
 
-    expect(columnIsLastLeftFixed(2, columns)).toEqual(false);
+    expect(columnIsLastLeftSticky(2, columns)).toEqual(false);
   });
 
-  it('columnIsFirstRightFixed true', () => {
+  it('columnIsFirstRightSticky true', () => {
     const columns = [
       {
         id: 1,
       },
       {
         id: 2,
-        fixed: 'right',
+        sticky: 'right',
       },
       {
         id: 3,
-        fixed: 'right',
+        sticky: 'right',
       },
     ];
 
-    expect(columnIsFirstRightFixed(2, columns)).toEqual(true);
+    expect(columnIsFirstRightSticky(2, columns)).toEqual(true);
   });
 
-  it('columnIsFirstRightFixed false', () => {
+  it('columnIsFirstRightSticky false', () => {
     const columns = [
       {
         id: 1,
@@ -102,11 +102,11 @@ describe('tests', () => {
       },
       {
         id: 3,
-        fixed: 'right',
+        sticky: 'right',
       },
     ];
 
-    expect(columnIsFirstRightFixed(2, columns)).toEqual(false);
+    expect(columnIsFirstRightSticky(2, columns)).toEqual(false);
   });
 
   it('getMarginRight case 1', () => {

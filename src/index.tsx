@@ -1,71 +1,77 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react';
+
+const constants = {
+  CSSAttrLastLeftTd: 'data-sticky-last-left-td',
+  CSSAttrFirstRightTd: 'data-sticky-first-right-td',
+  CSSAttrLastHeaderTr: 'data-sticky-last-header-tr',
+};
 
 interface Column {
   Header: any;
   columns?: Column[];
-  fixed?: 'left' | 'right';
   getHeaderProps: () => {
     style: object;
   };
   id: string | number;
   parent?: Column;
+  sticky?: 'left' | 'right';
   totalLeft: number;
 }
 
 export const checkErrors = (columns: Column[]) => {
   const hasGroups = !!columns.find((column: Column) => column.parent);
-  const fixedColumnsWithoutGroup = columns.filter((column: Column) => column.fixed && !column.parent).map(({ Header }) => `'${Header}'`);
+  const stickyColumnsWithoutGroup = columns.filter((column: Column) => column.sticky && !column.parent).map(({ Header }) => `'${Header}'`);
 
-  if (hasGroups && fixedColumnsWithoutGroup.length) {
+  if (hasGroups && stickyColumnsWithoutGroup.length) {
     throw new Error(`WARNING react-table-sticky:
-      \nYour ReactTable has group and fixed columns outside groups, and that will break UI.
-      \nYou must place ${fixedColumnsWithoutGroup.join(' and ')} columns into a group (even a group with an empty Header label)\n`);
+      \nYour ReactTable has group and sticky columns outside groups, and that will break UI.
+      \nYou must place ${stickyColumnsWithoutGroup.join(' and ')} columns into a group (even a group with an empty Header label)\n`);
   }
 
-  const bugWithUnderColumnsFixed = columns.find((parentCol) => !parentCol.fixed && parentCol.columns && parentCol.columns.find((col) => col.fixed));
+  const bugWithUnderColumnsSticky = columns.find((parentCol) => !parentCol.sticky && parentCol.columns && parentCol.columns.find((col) => col.sticky));
 
-  if (!bugWithUnderColumnsFixed) return;
+  if (!bugWithUnderColumnsSticky) return;
 
   // @ts-ignore
-  const childBugs = bugWithUnderColumnsFixed.columns.find(({ fixed }) => fixed);
+  const childBugs = bugWithUnderColumnsSticky.columns.find(({ sticky }) => sticky);
 
   if (!childBugs) return;
 
   throw new Error(`WARNING react-table-sticky:
-    \nYour ReactTable contain columns group with at least one child columns fixed.
-    \nWhen ReactTable has columns groups, only columns groups can be fixed
-    \nYou must set fixed: 'left' | 'right' for the '${bugWithUnderColumnsFixed.Header}' column, or remove the fixed property of '${childBugs.Header}' column.`);
+    \nYour ReactTable contain columns group with at least one child columns sticky.
+    \nWhen ReactTable has columns groups, only columns groups can be sticky
+    \nYou must set sticky: 'left' | 'right' for the '${bugWithUnderColumnsSticky.Header}'
+    column, or remove the sticky property of '${childBugs.Header}' column.`);
 };
 
-export function getFixedValue(column: Column): null | 'left' | 'right' {
-  if (column.fixed === 'left' || column.fixed === 'right') {
-    return column.fixed;
+export function getStickyValue(column: Column): null | 'left' | 'right' {
+  if (column.sticky === 'left' || column.sticky === 'right') {
+    return column.sticky;
   }
 
   if (column.parent) {
-    return getFixedValue(column.parent);
+    return getStickyValue(column.parent);
   }
 
   return null;
 }
 
-export function columnIsLastLeftFixed(columnId: Column['id'], columns: any): boolean {
+export function columnIsLastLeftSticky(columnId: Column['id'], columns: any): boolean {
   const index = columns.findIndex(({ id }: any) => id === columnId);
   const column = columns[index];
   const nextColumn = columns[index + 1];
-  const columnIsLeftFixed = getFixedValue(column) === 'left';
-  const nextColumnIsLeftFixed = nextColumn && getFixedValue(nextColumn) === 'left';
-  return columnIsLeftFixed && !nextColumnIsLeftFixed;
+  const columnIsLeftSticky = getStickyValue(column) === 'left';
+  const nextColumnIsLeftSticky = nextColumn && getStickyValue(nextColumn) === 'left';
+  return columnIsLeftSticky && !nextColumnIsLeftSticky;
 }
 
-export function columnIsFirstRightFixed(columnId: Column['id'], columns: any): boolean {
+export function columnIsFirstRightSticky(columnId: Column['id'], columns: any): boolean {
   const index = columns.findIndex(({ id }: any) => id === columnId);
   const column = columns[index];
   const prevColumn = columns[index - 1];
-  const columnIsRightFixed = getFixedValue(column) === 'right';
-  const prevColumnIsRightFixed = prevColumn && getFixedValue(prevColumn) === 'right';
-  return columnIsRightFixed && !prevColumnIsRightFixed;
+  const columnIsRightSticky = getStickyValue(column) === 'right';
+  const prevColumnIsRightSticky = prevColumn && getStickyValue(prevColumn) === 'right';
+  return columnIsRightSticky && !prevColumnIsRightSticky;
 }
 
 export function getMarginRight(columnId: Column['id'], columns: any) {
@@ -80,80 +86,75 @@ export function getMarginRight(columnId: Column['id'], columns: any) {
   return rightMargin;
 }
 
+function getDataAttrs(column: Column, columns: any) {
+  const dataAttrs = {};
+
+  const isLastLeftSticky = columnIsLastLeftSticky(column.id, columns);
+  const isFirstRightSticky = columnIsFirstRightSticky(column.id, columns);
+
+  if (isLastLeftSticky) {
+    // @ts-ignore
+    dataAttrs[constants.CSSAttrLastLeftTd] = true;
+  }
+
+  if (isFirstRightSticky) {
+    // @ts-ignore
+    dataAttrs[constants.CSSAttrFirstRightTd] = true;
+  }
+
+  return dataAttrs;
+}
+
 function getStyleFromColumn(column: Column, columns: any) {
   const props = column.getHeaderProps();
-  const fixed = getFixedValue(column);
-  if (!fixed) {
+  const sticky = getStickyValue(column);
+  if (!sticky) {
     return props.style;
   }
 
-  if (fixed !== 'left' && fixed !== 'right') {
-    throw new Error(`react-table-sticky: fixed value "${fixed}" is not allowed`);
+  if (sticky !== 'left' && sticky !== 'right') {
+    throw new Error(`react-table-sticky: sticky value "${sticky}" is not allowed`);
   }
 
-  const margin = fixed === 'left'
+  const margin = sticky === 'left'
     ? column.totalLeft
     : getMarginRight(column.id, columns);
 
-  const isLastLeftFixed = columnIsLastLeftFixed(column.id, columns);
-  const isFirstRightFixed = columnIsFirstRightFixed(column.id, columns);
-
-  const style = {
+  return {
     ...props.style,
     position: 'sticky',
-    [fixed]: margin,
+    [sticky]: margin,
     zIndex: 2,
-    backgroundColor: '#fff',
-  };
-
-  if (isLastLeftFixed) {
-    style.boxShadow = '2px 0px 3px #ccc';
-  }
-
-  if (isFirstRightFixed) {
-    style.boxShadow = '-2px 0px 3px #ccc';
-  }
-
-  return style;
-}
-
-function stickyHeaderGroup(headerGroup: any) {
-  const headers = headerGroup.headers.map((header: any) => {
-    return {
-      ...header,
-      isLastLeftFixed: columnIsLastLeftFixed(header.id, headerGroup.headers),
-      getHeaderProps: () => ({
-        ...header.getHeaderProps(),
-        style: getStyleFromColumn(header, headers),
-      }),
-    };
-  });
-
-  return {
-    ...headerGroup,
-    headers,
   };
 }
 
 export function stickyHeaderGroups<T extends any>(headerGroups: T): T {
   return headerGroups.map((headerGroup: any, index: number) => ({
-    ...stickyHeaderGroup(headerGroup),
+    ...headerGroup,
+    headers: headerGroup.headers.map((header: any) => {
+      return {
+        ...header,
+        isLastLeftSticky: columnIsLastLeftSticky(header.id, headerGroup.headers),
+        getHeaderProps: () => ({
+          ...header.getHeaderProps(),
+          style: getStyleFromColumn(header, headerGroup.headers),
+          ...getDataAttrs(header, headerGroup.headers),
+        }),
+      };
+    }),
     getHeaderGroupProps: () => {
       const props = headerGroup.getHeaderGroupProps();
-
-      const style = {
-        ...props.style,
-      };
-
       const isLast = index === (headerGroups.length - 1);
+      const dataAttrs = {};
 
       if (isLast) {
-        style.boxShadow = '0px 3px 3px #ccc';
+        // @ts-ignore
+        dataAttrs[constants.CSSAttrLastHeaderTr] = true;
       }
 
       return {
         ...props,
-        style,
+        ...dataAttrs,
       };
     },
   }));
@@ -168,6 +169,7 @@ export function stickyRow<T extends any>(row: T): T {
       getCellProps: () => ({
         ...cell.getCellProps(),
         style: getStyleFromColumn(cell.column, columns),
+        ...getDataAttrs(cell.column, columns),
       }),
     };
   });
@@ -177,70 +179,3 @@ export function stickyRow<T extends any>(row: T): T {
     cells,
   };
 }
-
-interface StickyProperties {
-  body: React.CSSProperties;
-  header: React.CSSProperties;
-  table: React.CSSProperties;
-}
-
-export const stickyStyles: StickyProperties = {
-  table: {
-    overflow: 'scroll',
-  },
-  header: {
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
-    background: '#fff',
-  },
-  body: {
-    position: 'relative',
-    zIndex: 0,
-  },
-};
-
-function StickyTable(props: React.HTMLProps<HTMLDivElement>) {
-  const { style, ...restProps } = props;
-  return (
-    <div
-      {...restProps}
-      style={{
-        ...stickyStyles.table,
-        ...style,
-      }}
-    />
-  );
-}
-
-function StickyHeader(props: React.HTMLProps<HTMLDivElement>) {
-  const { style, ...restProps } = props;
-  return (
-    <div
-      {...restProps}
-      style={{
-        ...stickyStyles.header,
-        ...style,
-      }}
-    />
-  );
-}
-
-function StickyBody(props: React.HTMLProps<HTMLDivElement>) {
-  const { style, ...restProps } = props;
-  return (
-    <div
-      {...restProps}
-      style={{
-        ...stickyStyles.body,
-        ...style,
-      }}
-    />
-  );
-}
-
-export const Sticky = {
-  Table: StickyTable,
-  Header: StickyHeader,
-  Body: StickyBody,
-};
