@@ -17,12 +17,6 @@
     <br/>
   <br/>
   <br/>
-  <div style="width: 170px; text-align: left">
-    <div>✓ Zero dependencies</div>
-    <div>✓ TypeScript</div>
-  </div>
-  <br/>
-  <br/>
   <pre>npm i <a href="https://www.npmjs.com/package/react-table-sticky">react-table-sticky</a></pre>
   <br/>
   <br/>
