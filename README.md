@@ -148,7 +148,7 @@ function TableDemo() {
     {
       columns,
       data,
-      // stickyStyles,
+      stickyStyles,
     },
     useBlockLayout,
     useSticky,
