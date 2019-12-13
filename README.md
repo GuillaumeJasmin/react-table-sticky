@@ -35,7 +35,6 @@
 * [Demo on CodeSandbox](https://codesandbox.io/s/sweet-cori-gl81g)
 * [Features](#features)
 * [Simple example](#simple-example)
-* [API](#api)
 * [Sticky columns for react-table v6](#sticky-columns-for-react-table-v6)
 * [Browser support](#browser-support)
 * [Contribute](#contribute)
@@ -215,11 +214,6 @@ const columns = [
   }
 ]
 ```
-  
-## API
-
-* `stickyHeaderGroups`
-* `stickyRow`
 
 ## Sticky columns for React Table v6
 If you search tool for sticky position in React Table v6, take a look at [react-table-hoc-fixed-columns](https://github.com/GuillaumeJasmin/react-table-hoc-fixed-columns)
