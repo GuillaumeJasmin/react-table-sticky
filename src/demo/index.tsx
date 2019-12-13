@@ -6,13 +6,12 @@ import styled from 'styled-components';
 // @ts-ignore
 import { useTable, useBlockLayout, useResizeColumns } from 'react-table';
 import { getData } from './makeData';
-import { stickyHeaderGroups, stickyRow } from '../index';
+import { useSticky } from '../index';
 
 const Styles = styled.div`
   padding: 1rem;
 
   .table {
-    border-spacing: 0;
     border: 1px solid #ddd;
 
     .tr {
@@ -29,6 +28,7 @@ const Styles = styled.div`
       border-bottom: 1px solid #ddd;
       border-right: 1px solid #ddd;
       background-color: #fff;
+      overflow: hidden;
 
       :last-child {
         border-right: 0;
@@ -56,33 +56,28 @@ const Styles = styled.div`
         position: sticky;
         top: 0;
         z-index: 1;
+        box-shadow: 0px 3px 3px #ccc;
+        width: fit-content;
       }
 
       .body {
         position: relative;
         z-index: 0;
       }
-
-      .tr[data-sticky-last-header-tr] {
-        box-shadow: 0px 3px 3px #ccc;
-      }
-
-      .td, .th {
-        overflow: hidden;
-
-        &[data-sticky-last-left-td] {
-          box-shadow: 2px 0px 3px #ccc;
-        }
-
-        &[data-sticky-first-right-td] {
-          box-shadow: -2px 0px 3px #ccc;
-        }
-      }
     }
   }
 `;
 
 function Table({ columns, data }: any) {
+  const stickyStyles = {
+    lastLeftTdStyle: {
+      boxShadow: '2px 0px 3px #ccc',
+    },
+    firstRightTdStyle: {
+      boxShadow: '-2px 0px 3px #ccc',
+    },
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -93,15 +88,18 @@ function Table({ columns, data }: any) {
     {
       columns,
       data,
+      stickyStyles,
     },
     useBlockLayout,
     useResizeColumns,
+    useSticky,
   );
 
   return (
     <div {...getTableProps()} className="table sticky" style={{ width: 1500, height: 500 }}>
       <div className="header">
-        {stickyHeaderGroups(headerGroups).map((headerGroup: any) => (
+        {/* {stickyHeaderGroups(headerGroups).map((headerGroup: any) => ( */}
+        {headerGroups.map((headerGroup: any) => (
           <div {...headerGroup.getHeaderGroupProps()} className="tr">
             {headerGroup.headers.map((column: any) => (
               <div {...column.getHeaderProps()} className="th">
@@ -120,7 +118,8 @@ function Table({ columns, data }: any) {
           prepareRow(row);
           return (
             <div {...row.getRowProps()} className="tr">
-              {stickyRow(row).cells.map((cell: any) => (
+              {/* {stickyRow(row).cells.map((cell: any) => ( */}
+              {row.cells.map((cell: any) => (
                 <div {...cell.getCellProps()} className="td">
                   {cell.render('Cell')}
                 </div>
@@ -136,6 +135,16 @@ function Table({ columns, data }: any) {
 function Demo() {
   const columns = useMemo(() => [
     {
+      Header: 'Other Infos',
+      sticky: 'left',
+      columns: [
+        {
+          Header: 'Age',
+          accessor: 'age',
+        },
+      ],
+    },
+    {
       Header: ' ',
       sticky: 'left',
       columns: [
@@ -148,15 +157,6 @@ function Demo() {
           Header: 'Last Name',
           accessor: 'lastName',
           width: 150,
-        },
-      ],
-    },
-    {
-      Header: 'Other Infos',
-      columns: [
-        {
-          Header: 'Age',
-          accessor: 'age',
         },
       ],
     },

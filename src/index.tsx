@@ -1,11 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
-const constants = {
-  CSSAttrLastLeftTd: 'data-sticky-last-left-td',
-  CSSAttrFirstRightTd: 'data-sticky-first-right-td',
-  CSSAttrLastHeaderTr: 'data-sticky-last-header-tr',
-};
-
 interface Column {
   Header: any;
   columns?: Column[];
@@ -86,96 +80,85 @@ export function getMarginRight(columnId: Column['id'], columns: any) {
   return rightMargin;
 }
 
-function getDataAttrs(column: Column, columns: any) {
-  const dataAttrs = {};
+const cellStylesSticky = {
+  position: 'sticky',
+  zIndex: 2,
+};
 
-  const isLastLeftSticky = columnIsLastLeftSticky(column.id, columns);
-  const isFirstRightSticky = columnIsFirstRightSticky(column.id, columns);
-
-  if (isLastLeftSticky) {
-    // @ts-ignore
-    dataAttrs[constants.CSSAttrLastLeftTd] = true;
+function findHeadersSameLevel(header: any, headers: any) {
+  if (!header.parent) {
+    return headers;
   }
 
-  if (isFirstRightSticky) {
-    // @ts-ignore
-    dataAttrs[constants.CSSAttrFirstRightTd] = true;
-  }
+  const children = headers
+    .map((_: any) => _.headers)
+    .reduce((a: any, b: any) => [...a, ...b], []);
 
-  return dataAttrs;
+  return children;
 }
 
-function getStyleFromColumn(column: Column, columns: any) {
-  const props = column.getHeaderProps();
-  const sticky = getStickyValue(column);
-  if (!sticky) {
-    return props.style;
-  }
+function getStickyStyle(header: any, instance: any) {
+  let style = {};
 
-  if (sticky !== 'left' && sticky !== 'right') {
-    throw new Error(`react-table-sticky: sticky value "${sticky}" is not allowed`);
-  }
+  const { stickyStyles = {} } = instance;
 
-  const margin = sticky === 'left'
-    ? column.totalLeft
-    : getMarginRight(column.id, columns);
+  checkErrors(instance.columns);
 
-  return {
-    ...props.style,
-    position: 'sticky',
-    [sticky]: margin,
-    zIndex: 2,
-  };
-}
+  const sticky = getStickyValue(header);
 
-export function stickyHeaderGroups<T extends any>(headerGroups: T): T {
-  return headerGroups.map((headerGroup: any, index: number) => ({
-    ...headerGroup,
-    headers: headerGroup.headers.map((header: any) => {
-      return {
-        ...header,
-        isLastLeftSticky: columnIsLastLeftSticky(header.id, headerGroup.headers),
-        getHeaderProps: () => ({
-          ...header.getHeaderProps(),
-          style: getStyleFromColumn(header, headerGroup.headers),
-          ...getDataAttrs(header, headerGroup.headers),
-        }),
-      };
-    }),
-    getHeaderGroupProps: () => {
-      const props = headerGroup.getHeaderGroupProps();
-      const isLast = index === (headerGroups.length - 1);
-      const dataAttrs = {};
-
-      if (isLast) {
-        // @ts-ignore
-        dataAttrs[constants.CSSAttrLastHeaderTr] = true;
-      }
-
-      return {
-        ...props,
-        ...dataAttrs,
-      };
-    },
-  }));
-}
-
-export function stickyRow<T extends any>(row: T): T {
-  const columns = row.cells.map((cell: any) => cell.column);
-  checkErrors(columns);
-  const cells = row.cells.map((cell: any) => {
-    return {
-      ...cell,
-      getCellProps: () => ({
-        ...cell.getCellProps(),
-        style: getStyleFromColumn(cell.column, columns),
-        ...getDataAttrs(cell.column, columns),
-      }),
+  if (sticky) {
+    style = {
+      ...cellStylesSticky,
     };
+
+    const headers = findHeadersSameLevel(header, instance.headers);
+
+    const margin = sticky === 'left'
+      ? header.totalLeft
+      : getMarginRight(header.id, headers);
+
+    style = {
+      ...style,
+      [sticky]: `${margin}px`,
+    };
+
+    const isLastLeftSticky = columnIsLastLeftSticky(header.id, headers);
+
+    if (isLastLeftSticky) {
+      style = {
+        ...style,
+        ...stickyStyles.lastLeftTdStyle,
+      };
+    }
+
+    const isFirstRightSticky = columnIsFirstRightSticky(header.id, headers);
+
+    if (isFirstRightSticky) {
+      style = {
+        ...style,
+        ...stickyStyles.firstRightTdStyle,
+      };
+    }
+  }
+
+  return style;
+}
+
+interface StickStyles {
+  firstRightTdStyle: React.CSSProperties;
+  lastLeftTdStyle: React.CSSProperties;
+}
+
+export const useSticky = (hooks: any) => {
+  hooks.getHeaderProps.push((props: any, instance: any, header: any) => {
+    const style = getStickyStyle(header, instance);
+    return [props, { style }];
   });
 
-  return {
-    ...row,
-    cells,
-  };
-}
+  hooks.getCellProps.push((props: any, instance: any, cell: any) => {
+    const style = getStickyStyle(cell.column, instance);
+    return [props, { style }];
+  });
+};
+
+useSticky.pluginName = 'useSticky';

@@ -28,7 +28,7 @@
   <br/>
 </div>
 
-:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.9`
+:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.10`
 
 ## Documentation
 
@@ -51,16 +51,16 @@ Steps:
 
 1. create CSS classes `.table` `.header` `.body` `.sticky` etc... (check following example)
 2. create HTML elements `<div className="table sticky">`, `<div className="header">`, `<div className="body">` etc...
-3. wrap headerGroups with `stickyHeaderGroups(headerGroups)` and row with `stickyRow(row)`
+3. add `stickyStyles` and `useSticky`
 4. then, add `sticky: 'left'` or `sticky: 'right'` to your column
 
 full example:
 
 ```js
 import React from 'react';
-import { useTable, useBlockLayout } from 'react-table';
-import { stickyHeaderGroups, stickyRow } from 'react-table-sticky';
 import styled from 'styled-components';
+import { useTable, useBlockLayout } from 'react-table';
+import { useSticky } from 'react-table-sticky';
 
 const Styles = styled.div`
   .table {
@@ -80,6 +80,7 @@ const Styles = styled.div`
       border-bottom: 1px solid #ddd;
       border-right: 1px solid #ddd;
       background-color: #fff;
+      overflow: hidden;
 
       :last-child {
         border-right: 0;
@@ -88,32 +89,17 @@ const Styles = styled.div`
 
     &.sticky {
       overflow: scroll;
-
       .header {
         position: sticky;
         top: 0;
         z-index: 1;
+        box-shadow: 0px 3px 3px #ccc;
+        width: fit-content;
       }
 
       .body {
         position: relative;
         z-index: 0;
-      }
-
-      .tr[data-sticky-last-header-tr] {
-        box-shadow: 0px 3px 3px #ccc;
-      }
-
-      .td, .th {
-        overflow: hidden;
-
-        &[data-sticky-last-left-td] {
-          box-shadow: 2px 0px 3px #ccc;
-        }
-
-        &[data-sticky-first-right-td] {
-          box-shadow: -2px 0px 3px #ccc;
-        }
       }
     }
   }
@@ -143,6 +129,15 @@ function TableDemo() {
     ...
   ]
 
+  const stickyStyles = {
+    lastLeftTdStyle: {
+      boxShadow: '2px 0px 3px #ccc',
+    },
+    firstRightTdStyle: {
+      boxShadow: '-2px 0px 3px #ccc',
+    },
+  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -153,15 +148,17 @@ function TableDemo() {
     {
       columns,
       data,
+      // stickyStyles,
     },
     useBlockLayout,
+    useSticky,
   );
 
   return (
     <Styles>
       <div {...getTableProps()} className="table sticky" style={{ width: 1000, height: 500 }}>
         <div className="header">
-          {stickyHeaderGroups(headerGroups).map((headerGroup) => (
+          {headerGroups.map((headerGroup) => (
             <div {...headerGroup.getHeaderGroupProps()} className="tr">
               {headerGroup.headers.map((column) => (
                 <div {...column.getHeaderProps()} className="th">
@@ -176,7 +173,7 @@ function TableDemo() {
             prepareRow(row);
             return (
               <div {...row.getRowProps()} className="tr">
-                {stickyRow(row).cells.map((cell) => (
+                {row.cells.map((cell) => (
                   <div {...cell.getCellProps()} className="td">
                     {cell.render('Cell')}
                   </div>
