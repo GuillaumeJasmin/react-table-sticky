@@ -22,7 +22,7 @@
   <br/>
 </div>
 
-:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.10`
+:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.15`
 
 ## Documentation
 
@@ -44,7 +44,7 @@ Steps:
 
 1. create CSS classes `.table` `.header` `.body` `.sticky` etc... (check following example)
 2. create HTML elements `<div className="table sticky">`, `<div className="header">`, `<div className="body">` etc...
-3. add `stickyStyles` and `useSticky`
+3. add `useSticky` hook
 4. then, add `sticky: 'left'` or `sticky: 'right'` to your column
 
 full example:
@@ -94,6 +94,14 @@ const Styles = styled.div`
         position: relative;
         z-index: 0;
       }
+
+      [data-sticky-last-left-td] {
+        box-shadow: 2px 0px 3px #ccc;
+      }
+
+      [data-sticky-first-right-td] {
+        box-shadow: -2px 0px 3px #ccc;
+      }
     }
   }
 `;
@@ -122,15 +130,6 @@ function TableDemo() {
     ...
   ]
 
-  const stickyStyles = {
-    lastLeftTdStyle: {
-      boxShadow: '2px 0px 3px #ccc',
-    },
-    firstRightTdStyle: {
-      boxShadow: '-2px 0px 3px #ccc',
-    },
-  };
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -141,7 +140,6 @@ function TableDemo() {
     {
       columns,
       data,
-      stickyStyles,
     },
     useBlockLayout,
     useSticky,

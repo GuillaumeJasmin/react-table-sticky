@@ -52,6 +52,7 @@ const Styles = styled.div`
 
     &.sticky {
       overflow: scroll;
+
       .header {
         position: sticky;
         top: 0;
@@ -64,20 +65,19 @@ const Styles = styled.div`
         position: relative;
         z-index: 0;
       }
+
+      [data-sticky-last-left-td] {
+        box-shadow: 2px 0px 3px #ccc;
+      }
+
+      [data-sticky-first-right-td] {
+        box-shadow: -2px 0px 3px #ccc;
+      }
     }
   }
 `;
 
 function Table({ columns, data }: any) {
-  const stickyStyles = {
-    lastLeftTdStyle: {
-      boxShadow: '2px 0px 3px #ccc',
-    },
-    firstRightTdStyle: {
-      boxShadow: '-2px 0px 3px #ccc',
-    },
-  };
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -88,7 +88,6 @@ function Table({ columns, data }: any) {
     {
       columns,
       data,
-      stickyStyles,
     },
     useBlockLayout,
     useResizeColumns,
@@ -98,7 +97,6 @@ function Table({ columns, data }: any) {
   return (
     <div {...getTableProps()} className="table sticky" style={{ width: 1500, height: 500 }}>
       <div className="header">
-        {/* {stickyHeaderGroups(headerGroups).map((headerGroup: any) => ( */}
         {headerGroups.map((headerGroup: any) => (
           <div {...headerGroup.getHeaderGroupProps()} className="tr">
             {headerGroup.headers.map((column: any) => (
@@ -118,7 +116,6 @@ function Table({ columns, data }: any) {
           prepareRow(row);
           return (
             <div {...row.getRowProps()} className="tr">
-              {/* {stickyRow(row).cells.map((cell: any) => ( */}
               {row.cells.map((cell: any) => (
                 <div {...cell.getCellProps()} className="td">
                   {cell.render('Cell')}

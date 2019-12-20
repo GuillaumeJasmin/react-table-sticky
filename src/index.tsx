@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 interface Column {
   Header: any;
   columns?: Column[];
@@ -97,10 +95,9 @@ function findHeadersSameLevel(header: any, headers: any) {
   return children;
 }
 
-function getStickyStyle(header: any, instance: any) {
+function getStickyProps(header: any, instance: any) {
   let style = {};
-
-  const { stickyStyles = {} } = instance;
+  const dataAttrs = {};
 
   checkErrors(instance.columns);
 
@@ -125,39 +122,33 @@ function getStickyStyle(header: any, instance: any) {
     const isLastLeftSticky = columnIsLastLeftSticky(header.id, headers);
 
     if (isLastLeftSticky) {
-      style = {
-        ...style,
-        ...stickyStyles.lastLeftTdStyle,
-      };
+      // @ts-ignore
+      dataAttrs['data-sticky-last-left-td'] = true;
     }
 
     const isFirstRightSticky = columnIsFirstRightSticky(header.id, headers);
 
     if (isFirstRightSticky) {
-      style = {
-        ...style,
-        ...stickyStyles.firstRightTdStyle,
-      };
+      // @ts-ignore
+      dataAttrs['data-sticky-first-right-td'] = true;
     }
   }
 
-  return style;
-}
-
-interface StickStyles {
-  firstRightTdStyle: React.CSSProperties;
-  lastLeftTdStyle: React.CSSProperties;
+  return {
+    style,
+    ...dataAttrs,
+  };
 }
 
 export const useSticky = (hooks: any) => {
-  hooks.getHeaderProps.push((props: any, instance: any, header: any) => {
-    const style = getStickyStyle(header, instance);
-    return [props, { style }];
+  hooks.getHeaderProps.push((props: any, { instance, column }: any) => {
+    const nextProps = getStickyProps(column, instance);
+    return [props, nextProps];
   });
 
-  hooks.getCellProps.push((props: any, instance: any, cell: any) => {
-    const style = getStickyStyle(cell.column, instance);
-    return [props, { style }];
+  hooks.getCellProps.push((props: any, { instance, cell }: any) => {
+    const nextProps = getStickyProps(cell.column, instance);
+    return [props, nextProps];
   });
 };
 
