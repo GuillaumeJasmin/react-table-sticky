@@ -12,7 +12,7 @@
     </a>
     <br/>
     <br/>
-    Sticky components and tools for <a href="https://github.com/tannerlinsley/react-table">React Table v7</a>
+    Sticky hook for <a href="https://github.com/tannerlinsley/react-table">React Table v7</a>
     <br/>
   <br/>
   <br/>
@@ -32,6 +32,7 @@
 
 ## Features
 * sticky header
+* sticky footer
 * sticky columns left and/or right
 * full customizable
 
