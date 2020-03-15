@@ -5,7 +5,6 @@
     <br/>
     <br/>
   </h1>
-    :warning: Under developpment, still unstable
     <br/>
     <br/>
     <a href="https://www.npmjs.com/package/react-table-sticky">
@@ -21,8 +20,6 @@
   <br/>
   <br/>
 </div>
-
-:warning: `react-table@7.x` is still in beta. Last verified compatible version is `7.0.0-rc.15`
 
 ## Documentation
 
@@ -82,12 +79,21 @@ const Styles = styled.div`
 
     &.sticky {
       overflow: scroll;
-      .header {
+      .header,
+      .footer {
         position: sticky;
-        top: 0;
         z-index: 1;
-        box-shadow: 0px 3px 3px #ccc;
         width: fit-content;
+      }
+
+      .header {
+        top: 0;
+        box-shadow: 0px 3px 3px #ccc;
+      }
+
+      .footer {
+        bottom: 0;
+        box-shadow: 0px -3px 3px #ccc;
       }
 
       .body {
@@ -145,6 +151,9 @@ function TableDemo() {
     useSticky,
   );
 
+  // Workaround as react-table footerGroups doesn't provide the same internal data than headerGroups
+  const footerGroups = headerGroups.slice().reverse();
+
   return (
     <Styles>
       <div {...getTableProps()} className="table sticky" style={{ width: 1000, height: 500 }}>
@@ -172,6 +181,17 @@ function TableDemo() {
               </div>
             );
           })}
+        </div>
+        <div className="footer">
+          {footerGroups.map((footerGroup) => (
+            <div {...footerGroup.getHeaderGroupProps()} className="tr">
+              {footerGroup.headers.map((column) => (
+                <div {...column.getHeaderProps()} className="td">
+                  {column.render('Footer')}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </Styles>

@@ -53,12 +53,21 @@ const Styles = styled.div`
     &.sticky {
       overflow: scroll;
 
-      .header {
+      .header,
+      .footer {
         position: sticky;
-        top: 0;
         z-index: 1;
-        box-shadow: 0px 3px 3px #ccc;
         width: fit-content;
+      }
+
+      .header {
+        top: 0;
+        box-shadow: 0px 3px 3px #ccc;
+      }
+
+      .footer {
+        bottom: 0;
+        box-shadow: 0px -3px 3px #ccc;
       }
 
       .body {
@@ -94,6 +103,9 @@ function Table({ columns, data }: any) {
     useSticky,
   );
 
+  // Workaround as react-table footerGroups doesn't provide the same internal data than headerGroups
+  const footerGroups = headerGroups.slice().reverse();
+
   return (
     <div {...getTableProps()} className="table sticky" style={{ width: 1500, height: 500 }}>
       <div className="header">
@@ -125,6 +137,17 @@ function Table({ columns, data }: any) {
           );
         })}
       </div>
+      <div className="footer">
+        {footerGroups.map((footerGroup: any) => (
+          <div {...footerGroup.getHeaderGroupProps()} className="tr">
+            {footerGroup.headers.map((column: any) => (
+              <div {...column.getHeaderProps()} className="td">
+                {column.render('Footer')}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -133,25 +156,39 @@ function Demo() {
   const columns = useMemo(() => [
     {
       Header: 'Other Infos',
+      Footer: 'Other Infos',
       sticky: 'left',
       columns: [
         {
           Header: 'Age',
           accessor: 'age',
+          Footer: (info: any) => {
+            const total = info.rows.reduce((sum: any, row: any) => row.values.age + sum, 0);
+            const average = Math.round(total / info.rows.length);
+            return (
+              <div>
+                Moyenne:
+                {average}
+              </div>
+            );
+          },
         },
       ],
     },
     {
       Header: ' ',
+      Footer: ' ',
       sticky: 'left',
       columns: [
         {
           Header: 'First Name',
+          Footer: 'First Name',
           accessor: 'firstName',
           width: 150,
         },
         {
           Header: 'Last Name',
+          Footer: 'Last Name',
           accessor: 'lastName',
           width: 150,
         },
@@ -159,34 +196,41 @@ function Demo() {
     },
     {
       Header: 'Location',
+      Footer: 'Location',
       columns: [
         {
           Header: 'Street',
+          Footer: 'Street',
           accessor: 'street',
           width: 300,
         },
         {
           Header: 'Street bis',
+          Footer: 'Street bis',
           accessor: 'streetBis',
           width: 300,
         },
         {
           Header: 'City',
+          Footer: 'City',
           accessor: 'city',
         },
       ],
     },
     {
       Header: 'Contact',
+      Footer: 'Contact',
       sticky: 'right',
       columns: [
         {
           Header: 'Professional Email',
+          Footer: 'Professional Email',
           accessor: 'proEmail',
           width: 200,
         },
         {
           Header: 'Email',
+          Footer: 'Email',
           accessor: 'email',
           width: 200,
         },
