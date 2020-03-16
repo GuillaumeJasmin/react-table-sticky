@@ -102,6 +102,10 @@ const Styles = styled.div`
         z-index: 0;
       }
 
+      [data-sticky-td] {
+        position: sticky;
+      }
+
       [data-sticky-last-left-td] {
         box-shadow: 2px 0px 3px #ccc;
       }

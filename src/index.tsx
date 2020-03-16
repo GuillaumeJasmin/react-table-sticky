@@ -108,6 +108,9 @@ function getStickyProps(header: any, instance: any) {
       ...cellStylesSticky,
     };
 
+    // @ts-ignore
+    dataAttrs['data-sticky-td'] = true;
+
     const headers = findHeadersSameLevel(header, instance.headers);
 
     const margin = sticky === 'left'
