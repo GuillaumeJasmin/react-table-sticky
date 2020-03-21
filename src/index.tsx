@@ -80,7 +80,7 @@ export function getMarginRight(columnId: Column['id'], columns: any) {
 
 const cellStylesSticky = {
   // hard coded inline style will be remove in the next major release
-  position: 'relative',
+  position: 'sticky',
   zIndex: 3,
 };
 
