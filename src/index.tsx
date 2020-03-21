@@ -79,8 +79,9 @@ export function getMarginRight(columnId: Column['id'], columns: any) {
 }
 
 const cellStylesSticky = {
-  position: 'sticky',
-  zIndex: 2,
+  // hard coded inline style will be remove in the next major release
+  position: 'relative',
+  zIndex: 3,
 };
 
 function findHeadersSameLevel(header: any, headers: any) {
