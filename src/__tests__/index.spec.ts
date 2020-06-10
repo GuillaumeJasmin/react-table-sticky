@@ -8,7 +8,7 @@ import {
 function createColumn(data: any) {
   return {
     Header: '',
-    getHeaderProps: () => ({}),
+    getHeader(): () => ({}),
     totalLeft: 0,
     ...data,
   };
