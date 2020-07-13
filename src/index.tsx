@@ -85,15 +85,9 @@ const cellStylesSticky = {
 };
 
 function findHeadersSameLevel(header: any, headers: any) {
-  if (!header.parent) {
-    return headers;
-  }
-
-  const children = headers
-    .map((_: any) => _.headers)
-    .reduce((a: any, b: any) => [...a, ...b], []);
-
-  return children;
+  return headers.filter((flatHeaderItem: any) => {
+    return flatHeaderItem.depth === header.depth;
+  });
 }
 
 function getStickyProps(header: any, instance: any) {
@@ -112,7 +106,7 @@ function getStickyProps(header: any, instance: any) {
     // @ts-ignore
     dataAttrs['data-sticky-td'] = true;
 
-    const headers = findHeadersSameLevel(header, instance.headers);
+    const headers = findHeadersSameLevel(header, instance.flatHeaders);
 
     const margin = sticky === 'left'
       ? header.totalLeft

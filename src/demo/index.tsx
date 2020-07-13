@@ -159,86 +159,102 @@ function Table({ columns, data }: any) {
 function Demo() {
   const columns = useMemo(() => [
     {
-      Header: 'Other Infos',
-      Footer: 'Other Infos',
+      Header: 'Other details',
+      Footer: 'Other details',
       sticky: 'left',
-      columns: [
-        {
-          Header: 'Age',
-          accessor: 'age',
-          Footer: (info: any) => {
-            const total = info.rows.reduce((sum: any, row: any) => row.values.age + sum, 0);
-            const average = Math.round(total / info.rows.length);
-            return (
-              <div>
-                Moyenne:
-                {average}
-              </div>
-            );
+      columns: [{
+        Header: 'Other Infos',
+        Footer: 'Other Infos',
+        columns: [
+          {
+            Header: 'Age',
+            accessor: 'age',
+            Footer: (info: any) => {
+              const total = info.rows.reduce((sum: any, row: any) => row.values.age + sum, 0);
+              const average = Math.round(total / info.rows.length);
+              return (
+                <div>
+                  Moyenne:
+                  {average}
+                </div>
+              );
+            },
           },
-        },
-      ],
+        ],
+      }],
     },
     {
-      Header: ' ',
-      Footer: ' ',
+      Header: 'User details',
+      Footer: '',
       sticky: 'left',
-      columns: [
-        {
-          Header: 'First Name',
-          Footer: 'First Name',
-          accessor: 'firstName',
-          width: 150,
-        },
-        {
-          Header: 'Last Name',
-          Footer: 'Last Name',
-          accessor: 'lastName',
-          width: 150,
-        },
-      ],
+      columns: [{
+        Header: ' ',
+        Footer: ' ',
+        columns: [
+          {
+            Header: 'First Name',
+            Footer: 'First Name',
+            accessor: 'firstName',
+            width: 150,
+          },
+          {
+            Header: 'Last Name',
+            Footer: 'Last Name',
+            accessor: 'lastName',
+            width: 150,
+          },
+        ],
+      }],
     },
     {
-      Header: 'Location',
-      Footer: 'Location',
-      columns: [
-        {
-          Header: 'Street',
-          Footer: 'Street',
-          accessor: 'street',
-          width: 300,
-        },
-        {
-          Header: 'Street bis',
-          Footer: 'Street bis',
-          accessor: 'streetBis',
-          width: 300,
-        },
-        {
-          Header: 'City',
-          Footer: 'City',
-          accessor: 'city',
-        },
-      ],
+      Header: 'Address',
+      Footer: 'Address',
+      columns: [{
+        Header: 'Location',
+        Footer: 'Location',
+        columns: [
+          {
+            Header: 'Street',
+            Footer: 'Street',
+            accessor: 'street',
+            width: 300,
+          },
+          {
+            Header: 'Street bis',
+            Footer: 'Street bis',
+            accessor: 'streetBis',
+            width: 300,
+          },
+          {
+            Header: 'City',
+            Footer: 'City',
+            accessor: 'city',
+          },
+        ],
+      }],
     },
     {
-      Header: 'Contact',
-      Footer: 'Contact',
+      Header: 'Contact details',
+      Footer: 'Contact details',
       sticky: 'right',
-      columns: [
-        {
-          Header: 'Professional Email',
-          Footer: 'Professional Email',
-          accessor: 'proEmail',
-          width: 200,
-        },
-        {
-          Header: 'Email',
-          Footer: 'Email',
-          accessor: 'email',
-          width: 200,
-        },
-      ],
+      columns: [{
+        Header: 'Contact',
+        Footer: 'Contact',
+        columns: [
+          {
+            Header: 'Professional Email',
+            Footer: 'Professional Email',
+            accessor: 'proEmail',
+            width: 200,
+          },
+          {
+            Header: 'Email',
+            Footer: 'Email',
+            accessor: 'email',
+            width: 200,
+          },
+        ],
+      }],
     },
   ], []);
 
