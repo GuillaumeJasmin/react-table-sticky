@@ -49,18 +49,20 @@ export function getStickyValue(column: Column): null | 'left' | 'right' {
 }
 
 export function columnIsLastLeftSticky(columnId: Column['id'], columns: any): boolean {
-  const index = columns.findIndex(({ id }: any) => id === columnId);
-  const column = columns[index];
-  const nextColumn = columns[index + 1];
+  const visibleColumns = columns.filter(col => col.isVisible);
+  const index = visibleColumns.findIndex(({ id }: any) => id === columnId);
+  const column = visibleColumns[index];
+  const nextColumn = visibleColumns[index + 1];
   const columnIsLeftSticky = getStickyValue(column) === 'left';
   const nextColumnIsLeftSticky = nextColumn && getStickyValue(nextColumn) === 'left';
   return columnIsLeftSticky && !nextColumnIsLeftSticky;
 }
 
 export function columnIsFirstRightSticky(columnId: Column['id'], columns: any): boolean {
-  const index = columns.findIndex(({ id }: any) => id === columnId);
-  const column = columns[index];
-  const prevColumn = columns[index - 1];
+  const visibleColumns = columns.filter(col => col.isVisible);
+  const index = visibleColumns.findIndex(({ id }: any) => id === columnId);
+  const column = visibleColumns[index];
+  const prevColumn = visibleColumns[index - 1];
   const columnIsRightSticky = getStickyValue(column) === 'right';
   const prevColumnIsRightSticky = prevColumn && getStickyValue(prevColumn) === 'right';
   return columnIsRightSticky && !prevColumnIsRightSticky;
